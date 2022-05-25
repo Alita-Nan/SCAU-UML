@@ -162,12 +162,14 @@ public class AtmFrame extends JFrame implements KeyListener {
             		refreshDisplayPanel(getServicePanel()); //验证密码成功，显示交易菜单面板
             	}else {
             		refreshDisplayPanel(new WelcomePanel()); //验证密码失败，返回欢迎面板
+					cardReaderSimulation.setEnabled(true);
 					JOptionPane.showMessageDialog(displayPanel, "密码错误！！请再按回车键后重试!", "🦈", JOptionPane.WARNING_MESSAGE);
             	}
             }
         });
 		loginPanel.getLeftBtn4().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+				cardReaderSimulation.setEnabled(true);
             	refreshDisplayPanel(new WelcomePanel()); //验证密码失败，返回欢迎面板
             }
         });
