@@ -15,11 +15,8 @@ public class ATM {
 	@Inject
 	private CardReader cardReader; //建立ATM和cardReader关联。
 	private CashDispenser cashDispenser;
+	@Inject
 	private ReceiptPrinter receiptPrinter;
-	/**
-	 *  If atm accept a validated card, then it will receive data from AccountTransactionService.
-	 */
-	private Card card;
 
 	@Inject
 	private WithDrawlService withDrawlService;
@@ -36,6 +33,7 @@ public class ATM {
 		//1个事件1张顺序图+1张类图
 		//代码实现。
 		//评判要求：代码和模型要求吻合；建议先画模型，至少草图，然后写代码。
+		Card card = cardReader.getData();
 		return card.getAccount().getPassword().equals(password);
 	}
 
@@ -43,6 +41,7 @@ public class ATM {
 	 * 系统顺序图中的第二个事件。
 	 */
 	public String withDrawl(Double crashInATM, Integer want){ //返回类型、方法名、参数各组自行设计
+		Card card = cardReader.getData();
 		return withDrawlService.withDrawl(crashInATM, want, card, cashDispenser);
 	}
 
@@ -50,8 +49,10 @@ public class ATM {
 	 * XXXXXX
 	 * 系统顺序图中的第三个事件。
 	 */
-  	public String print(){ //返回类型、方法名、参数各组自行设计
-		return printService.print(card.getID());
+  	public void print(){ //返回类型、方法名、参数各组自行设计
+		Card card = cardReader.getData();
+		String print = printService.print(card.getID());
+		this.receiptPrinter.printReceipt(print, false);
 	}
 
 
@@ -68,7 +69,6 @@ public class ATM {
 	 */
 	public void turnOn(){
 		cashDispenser = new CashDispenserSimulation(10000.00);  //模拟钞箱中放入10000元
-		receiptPrinter = new ReceiptPrinterSimulation();
 	}
 	//getter
 	public CardReader getCardReader() {
@@ -79,10 +79,6 @@ public class ATM {
 	}
 	public ReceiptPrinter getReceiptPrinter() {
 		return receiptPrinter;
-	}
-
-	public void setCard(Card card) {
-		this.card = card;
 	}
 
 

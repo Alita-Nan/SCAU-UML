@@ -8,5 +8,5 @@ public interface ReceiptPrinter {
 	/**
 	 * 打印凭证
 	 */
-	public void printReceipt(); //返回值及参数各组自行设计
+	public void printReceipt(String content, boolean isAppend); //返回值及参数各组自行设计
 }
