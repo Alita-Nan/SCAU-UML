@@ -7,6 +7,8 @@ import experiment.Strawberry;
 import remote.AccountTransactionService;
 
 import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -19,16 +21,24 @@ public class CardReaderSimulation extends JTextField implements CardReader{
 	private static final long serialVersionUID = 1L;
 	@Inject
 	private AccountTransactionService service;
-
+	/**
+	 *  If atm accept a validated card, then this will maintain data from AccountTransactionService.
+	 */
+	private Card card;
 
 	@Override
-	public Card readCard(String id) {
-		return service.validate(id);
+	public boolean readCard(String id) {
+		Card validate = service.validate(id);
+		if (validate != null) {
+			card = validate;
+		}
+		return validate != null;
 	}
 
 	@Override
-	public void exitCard() {
-		// TODO 交给你了
+	public void exitCard(String id) {
+		// Delete information of the exited card.
+		card = null;
 	}
 
 	@Override
@@ -36,4 +46,8 @@ public class CardReaderSimulation extends JTextField implements CardReader{
 		// TODO 交给你了
 	}
 
+	@Override
+	public Card getData() {
+		return card;
+	}
 }

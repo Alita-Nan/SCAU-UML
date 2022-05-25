@@ -162,7 +162,7 @@ public class AtmFrame extends JFrame implements KeyListener {
             		refreshDisplayPanel(getServicePanel()); //验证密码成功，显示交易菜单面板
             	}else {
             		refreshDisplayPanel(new WelcomePanel()); //验证密码失败，返回欢迎面板
-					JOptionPane.showMessageDialog(displayPanel, "密码错误！！请再按回车键后重试!", "😒", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(displayPanel, "密码错误！！请再按回车键后重试!", "🦈", JOptionPane.WARNING_MESSAGE);
             	}
             }
         });
@@ -190,6 +190,7 @@ public class AtmFrame extends JFrame implements KeyListener {
 			servicePanel.getLeftBtn4().addActionListener(new ActionListener() {
 	            public void actionPerformed(ActionEvent arg0) {
 	            	//TODO 交给你了......
+					cardReaderSimulation.setEnabled(true);
 	            	refreshDisplayPanel(new WelcomePanel()); //选择退出，返回欢迎面板
 	            }
 	        });
@@ -215,10 +216,6 @@ public class AtmFrame extends JFrame implements KeyListener {
             	                    //后续逻辑：用户取走现金后(按下button)，显示打印凭证面板。
 				String input = withdrawlPanel.getAmountTextField().getText();
 				int want = Integer.parseInt(input);
-				if(want % 10 != 0 || want < 100){
-					JOptionPane.showMessageDialog(displayPanel, "只支持面额为100的钞票！", "🦈", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
 				double cashBalance = cashDispenserSimulation.getCashBalance();
 				String err = atm.withDrawl(cashBalance, want);
 				if(err != null){
@@ -251,9 +248,7 @@ public class AtmFrame extends JFrame implements KeyListener {
         });
 		printPanel.getRightBtn4().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-            	//TODO 交给你了 ......
-				String print = atm.print();
-				receiptPrinterSimulation.append("\n" + print);
+				atm.print();
 				refreshDisplayPanel(getServicePanel());//打印凭证，返回服务菜单面板
             }
         });
@@ -278,10 +273,9 @@ public class AtmFrame extends JFrame implements KeyListener {
 			boolean flag = false;
 			String cardID = cardReaderSimulation.getText();
 			CardReader reader = atm.getCardReader();
-			if(reader.readCard(cardID) != null){
+			if(reader.readCard(cardID)){
 				flag = true;          //如果读卡验证卡成功，flag设为true
-				this.card = reader.readCard(cardID);
-				atm.setCard(card);
+				reader.readCard(cardID);
 			}else{
 				flag = false;
 			}
@@ -289,6 +283,7 @@ public class AtmFrame extends JFrame implements KeyListener {
 			if(flag == true) {     //银行卡读取成功且有效，显示输入密码面板
 				displayPanel.removeAll();
 				displayPanel.add(getLoginPanel());
+				cardReaderSimulation.setEnabled(false);
 				this.repaint();
 			}else {               // 银行卡无效，提示卡号无效
 				JOptionPane.showMessageDialog(displayPanel, "无效卡！", "🦈", JOptionPane.WARNING_MESSAGE);

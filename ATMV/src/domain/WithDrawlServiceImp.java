@@ -4,6 +4,7 @@ import experiment.Inject;
 import experiment.Strawberry;
 import remote.AccountTransactionService;
 
+import javax.swing.*;
 import java.util.Date;
 
 /**
@@ -20,6 +21,9 @@ public class WithDrawlServiceImp implements WithDrawlService{
     public String withDrawl(Double crashInATM, Integer want, Card card, CashDispenser cashDispenser) {
         if(crashInATM < want){
             return "该ATM中没有足够的现金！😥";
+        }
+        if(want % 10 != 0 || want < 100){
+            return "只支持面额为100的钞票！";
         }
         boolean isSuccess =  service.withDrawl(card.getID(), want);
         if (isSuccess){
